@@ -12,7 +12,6 @@ const numeralMap = {
     M: 1000
 };
 
-
 function romanToInt(s: string): number {
     let integerValue = 0;
     let skipNextNumeral = false;
