@@ -1,46 +1,114 @@
-const numeralMap = {
-    I: 1,
-    V: 5,
-    X: 10,
-    L: 50,
-    C: 100,
-    D: 500,
-    M: 1000
-};
+function intToRoman (number: number): string {
+    const numberPlaces = [...number.toString()];
+    let numeral = "";
 
-function intToRoman(number: number): string {
-    const numberString = number.toString();
-    const numberOfDigits = numberString.length;
+    console.log(numberPlaces, "these are numberPlaces")
+    console.log(numberPlaces.length, "this is numberPlaces.length");
 
-    if (numberOfDigits > 3) {
-        return getThousandthsNumeral(number);
+    for (let i = numberPlaces.length - 1; i >= 0; i--) {
+        console.log(i, numeral, "this is i")
+        if (i === numberPlaces.length - 1) {
+            numeral = getOnesValue(parseInt(numberPlaces[i])) + numeral;
+        
+            continue;
+        }
+
+        if (i === numberPlaces.length - 2) {
+            numeral = getTensValue(parseInt(numberPlaces[i])) + numeral;
+            
+            continue;
+        }
+        
+        if (i === numberPlaces.length - 3) {
+            numeral = getHundredsValue(parseInt(numberPlaces[i])) + numeral;
+
+            continue;
+        }
+
+        numeral = getThousandsValue(parseInt(numberPlaces[i])) + numeral;
     }
 
-    return "sumTingWong";
-};
-
-function getThousandthsNumeral(number: number): string {
-    const numberOfThousands = number / 1000;
-    let numeralString = "";
-
-    for (let i = 0, len = numberOfThousands; i < len; i++) {
-        numeralString = numeralString + "M";
-    }
-
-    if (numberOfThousands % 1 === 0) {
-        return numeralString;
-    }
-
-    const remainingNumeral = getHundredthsNumeral((numberOfThousands.toFixed(2)));
-
-    return numeralString + remainingNumeral;
+    return numeral;
 }
 
-function getHundredthsNumeral(number: number): string {
-    const numberOfHundredths = number * 3;
-    let numeralString = "";
+function getThousandsValue(number: number): string {
+    let thousandsValue = "";
 
-    for (let i = 0, len = numberOfHundredths; i < len; i++) {
-        numeralString = numeralString + 
+    for (let i = 1; i <= number; i++) {
+        thousandsValue = thousandsValue + "M"
     }
+
+    return thousandsValue;
+}
+
+function getHundredsValue(number: number): string {
+    let hundredsValue = "";
+
+    if (number === 9) {
+        return "CM";
+    }
+
+    if (number === 4) {
+        return "CD";
+    }
+
+    for (let i = 1, len = number; i <= len; i++) {
+        if (i === 5) {
+            hundredsValue = "D";
+
+            continue;
+        }
+
+        hundredsValue = hundredsValue + "C"
+    }
+
+    return hundredsValue;
+}
+
+function getTensValue(number: number): string {
+    let tensValue = "";
+
+    if (number === 9) {
+        return "XC";
+    }
+
+    if (number === 4) {
+        return "XL";
+    }
+
+    for (let i = 1, len = number; i <= len; i++) {
+        if (i === 5) {
+            tensValue = "L";
+
+            continue;
+        }
+
+        tensValue = tensValue + "X"
+    }
+
+    return tensValue;
+}
+
+function getOnesValue(number: number): string {
+    let onesValue = "";
+
+    if (number === 9) {
+        return "IX";
+    }
+
+    if (number === 4) {
+        return "IV";
+    }
+
+    for (let i = 1, len = number; i <= len; i++) {
+        if (i === 5) {
+            onesValue = "V";
+
+            continue;
+        }
+
+        onesValue = onesValue + "I"
+    }
+
+    return onesValue;
 }
