@@ -1,72 +1,35 @@
-const numeralValues = {
-    "4": {
-        numeral: "M",
-        denominator: 1000
-    },
-    "3": {
-        numeral: "C",
-        base5: "D",
-        base9: "CM",
-        base4: "CD",
-        denominator: 100
-    },
-    "2": {
-        numeral: "X",
-        base5: "L",
-        base9: "XC",
-        base4: "XL",
-        denominator: 10
-    },
-    "1": {
-        numeral: "I",
-        base5: "V",
-        base9: "IX",
-        base4: "IV",
-        denominator: 1
-    }
-}
+/** Runtime: 121 ms, faster than 98.78 % of TypeScript online submissions for Integer to Roman.
+Memory Usage: 47.4 MB, less than 95.73 % of TypeScript online submissions for Integer to Roman.
+**/
 
-function intToRoman(number: number): string {
-    return recursiveLoop(number, number.toString().length, "");
-}
+const romanMatrix = [
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I']
+];
 
-function recursiveLoop(number: number, numberOfDigits: number, initialNumeral: string): string {
-    if (numberOfDigits === 0) {
-        return initialNumeral;
+function intToRoman(value: number) {
+    if (value === 0) {
+        return '';
     }
 
-    const values = numeralValues[numberOfDigits];
-    const numberOverBase = number / values.denominator;
-    const numberOfDecimalPoints = numberOfDigits - 1;
-    const decimalValue = +((numberOverBase % 1).toFixed(numberOfDecimalPoints));
-    let numeralString = initialNumeral;
-    let value = "";
+    for (let i = 0; i < romanMatrix.length; i++) {
+        const roundedBaseValue = romanMatrix[i][0] as number;
 
-    if (Math.floor(numberOverBase) === 9) {
-        numeralString = numeralString + values.base9;
-
-        return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString);
-    }
-
-    if (Math.floor(numberOverBase) === 4) {
-        numeralString = numeralString + values.base4;
-
-        return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString);
-    }
-
-    for (let i = 1, len = Math.floor(numberOverBase); i <= len; i++) {
-        if (i === 5) {
-            value = values.base5;
-
+        if (value < roundedBaseValue) {
             continue;
         }
 
-        value = value + values.numeral;
+        return romanMatrix[i][1] + intToRoman(value - roundedBaseValue);
     }
-
-    if (decimalValue === 0) {
-        return numeralString + value;
-    }
-
-    return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString + value);
 }
