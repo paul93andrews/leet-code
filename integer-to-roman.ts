@@ -1,114 +1,72 @@
-function intToRoman (number: number): string {
-    const numberPlaces = [...number.toString()];
-    let numeral = "";
-
-    console.log(numberPlaces, "these are numberPlaces")
-    console.log(numberPlaces.length, "this is numberPlaces.length");
-
-    for (let i = numberPlaces.length - 1; i >= 0; i--) {
-        console.log(i, numeral, "this is i")
-        if (i === numberPlaces.length - 1) {
-            numeral = getOnesValue(parseInt(numberPlaces[i])) + numeral;
-        
-            continue;
-        }
-
-        if (i === numberPlaces.length - 2) {
-            numeral = getTensValue(parseInt(numberPlaces[i])) + numeral;
-            
-            continue;
-        }
-        
-        if (i === numberPlaces.length - 3) {
-            numeral = getHundredsValue(parseInt(numberPlaces[i])) + numeral;
-
-            continue;
-        }
-
-        numeral = getThousandsValue(parseInt(numberPlaces[i])) + numeral;
+const numeralValues = {
+    "4": {
+        numeral: "M",
+        denominator: 1000
+    },
+    "3": {
+        numeral: "C",
+        base5: "D",
+        base9: "CM",
+        base4: "CD",
+        denominator: 100
+    },
+    "2": {
+        numeral: "X",
+        base5: "L",
+        base9: "XC",
+        base4: "XL",
+        denominator: 10
+    },
+    "1": {
+        numeral: "I",
+        base5: "V",
+        base9: "IX",
+        base4: "IV",
+        denominator: 1
     }
-
-    return numeral;
 }
 
-function getThousandsValue(number: number): string {
-    let thousandsValue = "";
-
-    for (let i = 1; i <= number; i++) {
-        thousandsValue = thousandsValue + "M"
-    }
-
-    return thousandsValue;
+function intToRoman(number: number): string {
+    return recursiveLoop(number, number.toString().length, "");
 }
 
-function getHundredsValue(number: number): string {
-    let hundredsValue = "";
-
-    if (number === 9) {
-        return "CM";
+function recursiveLoop(number: number, numberOfDigits: number, initialNumeral: string): string {
+    if (numberOfDigits === 0) {
+        return initialNumeral;
     }
 
-    if (number === 4) {
-        return "CD";
+    const values = numeralValues[numberOfDigits];
+    const numberOverBase = number / values.denominator;
+    const numberOfDecimalPoints = numberOfDigits - 1;
+    const decimalValue = +((numberOverBase % 1).toFixed(numberOfDecimalPoints));
+    let numeralString = initialNumeral;
+    let value = "";
+
+    if (Math.floor(numberOverBase) === 9) {
+        numeralString = numeralString + values.base9;
+
+        return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString);
     }
 
-    for (let i = 1, len = number; i <= len; i++) {
+    if (Math.floor(numberOverBase) === 4) {
+        numeralString = numeralString + values.base4;
+
+        return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString);
+    }
+
+    for (let i = 1, len = Math.floor(numberOverBase); i <= len; i++) {
         if (i === 5) {
-            hundredsValue = "D";
+            value = values.base5;
 
             continue;
         }
 
-        hundredsValue = hundredsValue + "C"
+        value = value + values.numeral;
     }
 
-    return hundredsValue;
-}
-
-function getTensValue(number: number): string {
-    let tensValue = "";
-
-    if (number === 9) {
-        return "XC";
+    if (decimalValue === 0) {
+        return numeralString + value;
     }
 
-    if (number === 4) {
-        return "XL";
-    }
-
-    for (let i = 1, len = number; i <= len; i++) {
-        if (i === 5) {
-            tensValue = "L";
-
-            continue;
-        }
-
-        tensValue = tensValue + "X"
-    }
-
-    return tensValue;
-}
-
-function getOnesValue(number: number): string {
-    let onesValue = "";
-
-    if (number === 9) {
-        return "IX";
-    }
-
-    if (number === 4) {
-        return "IV";
-    }
-
-    for (let i = 1, len = number; i <= len; i++) {
-        if (i === 5) {
-            onesValue = "V";
-
-            continue;
-        }
-
-        onesValue = onesValue + "I"
-    }
-
-    return onesValue;
+    return recursiveLoop(decimalValue * values.denominator, numberOfDecimalPoints, numeralString + value);
 }
